@@ -41,50 +41,47 @@ export async function searchThingiverse(
     // Parse HTML to extract model information
     const models: Model3D[] = [];
     
-    // Extract things from the HTML
-    // Thingiverse uses a specific structure for search results
-    const thingMatches = html.matchAll(
-      /<a[^>]*href="\/thing:(\d+)"[^>]*>[\s\S]*?<h3[^>]*>(.*?)<\/h3>[\s\S]*?<img[^>]*src="([^"]*)"[\s\S]*?<span[^>]*class="[^"]*creator[^"]*"[^>]*>(.*?)<\/span>/gi
-    );
-
-    for (const match of thingMatches) {
-      if (models.length >= limit) break;
-      
-      const [_, id, name, thumbnail, creator] = match;
-      
-      models.push({
-        name: name.trim().replace(/<[^>]*>/g, ''),
-        url: `https://www.thingiverse.com/thing:${id}`,
-        thumbnail: thumbnail.startsWith('http') ? thumbnail : `https:${thumbnail}`,
-        creator: creator.trim().replace(/<[^>]*>/g, ''),
-        likes: 0,
-        description: '',
-        source: 'thingiverse',
-      });
+    // First, try to extract thing IDs
+    const thingIds = new Set<string>();
+    const thingIdMatches = html.matchAll(/\/thing:(\d+)/g);
+    
+    for (const match of thingIdMatches) {
+      if (thingIds.size >= limit) break;
+      thingIds.add(match[1]);
     }
 
-    // Fallback: Try alternative parsing if first method fails
-    if (models.length === 0) {
-      const simpleMatches = html.matchAll(/\/thing:(\d+)/g);
-      const seen = new Set<string>();
-      
-      for (const match of simpleMatches) {
-        if (models.length >= limit) break;
-        const id = match[1];
-        
-        if (!seen.has(id)) {
-          seen.add(id);
-          models.push({
-            name: `3D Model #${id}`,
-            url: `https://www.thingiverse.com/thing:${id}`,
-            thumbnail: '',
-            creator: 'Unknown',
-            likes: 0,
-            description: `Thingiverse model matching "${query}"`,
-            source: 'thingiverse',
-          });
+    // For each thing ID, try to find associated image
+    const imageMap = new Map<string, string>();
+    const imageMatches = html.matchAll(/<img[^>]*src="([^"]*)"[^>]*>/gi);
+    
+    for (const match of imageMatches) {
+      const imgSrc = match[1];
+      // Look for Thingiverse CDN images
+      if (imgSrc.includes('cdn.thingiverse.com') || imgSrc.includes('thingiverse-production')) {
+        // Find nearby thing ID
+        const imgIndex = html.indexOf(match[0]);
+        const context = html.substring(Math.max(0, imgIndex - 500), Math.min(html.length, imgIndex + 500));
+        const thingMatch = context.match(/\/thing:(\d+)/);
+        if (thingMatch && thingIds.has(thingMatch[1])) {
+          imageMap.set(thingMatch[1], imgSrc);
         }
       }
+    }
+
+    // Build results
+    for (const id of Array.from(thingIds)) {
+      if (models.length >= limit) break;
+      const thumbnail = imageMap.get(id) || '';
+      
+      models.push({
+        name: `3D Model #${id}`,
+        url: `https://www.thingiverse.com/thing:${id}`,
+        thumbnail: thumbnail.startsWith('http') ? thumbnail : thumbnail ? `https:${thumbnail}` : '',
+        creator: 'Thingiverse',
+        likes: 0,
+        description: `Thingiverse model for "${query}"`,
+        source: 'thingiverse',
+      });
     }
 
     console.log(`Thingiverse found ${models.length} models for "${query}"`);
@@ -120,29 +117,55 @@ export async function searchThangs(
     const html = await response.text();
     const models: Model3D[] = [];
 
-    // Extract thumbnail images and model info
-    const imageMatches = html.matchAll(/<img[^>]*src="([^"]*(?:thangs-static|thangs\.com)[^"]*)"[^>]*alt="([^"]*)"[^>]*>/gi);
+    // Extract model links first
+    const modelLinks = new Set<string>();
+    const linkMatches = html.matchAll(/href="(\/m\/[^"]+)"/gi);
+    
+    for (const match of linkMatches) {
+      if (modelLinks.size >= limit) break;
+      const path = match[1];
+      if (!path.includes('mythangs') && !path.includes('/search')) {
+        modelLinks.add(path);
+      }
+    }
+
+    // Extract all images
+    const imageMatches = html.matchAll(/<img[^>]*src="([^"]+)"[^>]*(?:alt="([^"]*)")?[^>]*>/gi);
+    const imageMap = new Map<string, { url: string; alt: string }>();
     
     for (const match of imageMatches) {
-      if (models.length >= limit) break;
-      const [_, thumbnail, altText] = match;
+      const imgSrc = match[1];
+      const alt = match[2] || '';
       
-      // Look for associated model link near this image
-      const modelLinkMatch = html.match(new RegExp(`href="(/m/[^"]+)"[^>]*>(?:[\\s\\S]{0,200})?${altText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`));
-      
-      if (thumbnail && !thumbnail.includes('avatar') && !thumbnail.includes('logo')) {
-        const modelUrl = modelLinkMatch ? `https://thangs.com${modelLinkMatch[1]}` : `https://thangs.com/search/${encodeURIComponent(query)}`;
-        
-        models.push({
-          name: altText || `3D Model from Thangs`,
-          url: modelUrl,
-          thumbnail: thumbnail.startsWith('http') ? thumbnail : `https:${thumbnail}`,
-          creator: 'Thangs Community',
-          likes: 0,
-          description: `Model matching "${query}" on Thangs`,
-          source: 'thangs',
-        });
+      // Filter for actual model images
+      if ((imgSrc.includes('thangs-static') || imgSrc.includes('thangs.com')) && 
+          !imgSrc.includes('avatar') && 
+          !imgSrc.includes('logo') &&
+          !imgSrc.includes('icon')) {
+        // Find nearby model link
+        const imgIndex = html.indexOf(match[0]);
+        const context = html.substring(Math.max(0, imgIndex - 300), Math.min(html.length, imgIndex + 300));
+        const linkMatch = context.match(/href="(\/m\/[^"]+)"/);
+        if (linkMatch) {
+          imageMap.set(linkMatch[1], { url: imgSrc, alt });
+        }
       }
+    }
+
+    // Build results
+    for (const link of Array.from(modelLinks)) {
+      if (models.length >= limit) break;
+      const imageInfo = imageMap.get(link);
+      
+      models.push({
+        name: imageInfo?.alt || `3D Model from Thangs`,
+        url: `https://thangs.com${link}`,
+        thumbnail: imageInfo ? (imageInfo.url.startsWith('http') ? imageInfo.url : `https:${imageInfo.url}`) : '',
+        creator: 'Thangs',
+        likes: 0,
+        description: `Model for "${query}" on Thangs`,
+        source: 'thangs',
+      });
     }
 
     console.log(`Thangs found ${models.length} models for "${query}"`);
@@ -177,36 +200,51 @@ export async function searchPrintables(
 
     const html = await response.text();
     const models: Model3D[] = [];
-    const seen = new Set<string>();
 
-    // Extract images and model information
-    const imageMatches = html.matchAll(/<img[^>]*src="([^"]*media\.printables\.com[^"]*)"[^>]*alt="([^"]*)"[^>]*>/gi);
+    // Extract model IDs first
+    const modelIds = new Set<string>();
+    const modelMatches = html.matchAll(/\/model\/(\d+)/g);
+    
+    for (const match of modelMatches) {
+      if (modelIds.size >= limit) break;
+      modelIds.add(match[1]);
+    }
+
+    // Extract images and associate with models
+    const imageMap = new Map<string, { url: string; alt: string }>();
+    const imageMatches = html.matchAll(/<img[^>]*src="([^"]+)"[^>]*(?:alt="([^"]*)")?[^>]*>/gi);
     
     for (const match of imageMatches) {
-      if (models.length >= limit) break;
-      const [_, thumbnail, altText] = match;
+      const imgSrc = match[1];
+      const alt = match[2] || '';
       
-      // Look for model link near this image
-      const contextStart = html.indexOf(match[0]) - 300;
-      const contextEnd = html.indexOf(match[0]) + 300;
-      const context = html.substring(Math.max(0, contextStart), Math.min(html.length, contextEnd));
-      
-      const modelLinkMatch = context.match(/href="\/model\/(\d+)[^"]*"/);
-      
-      if (modelLinkMatch && !seen.has(modelLinkMatch[1])) {
-        seen.add(modelLinkMatch[1]);
-        const id = modelLinkMatch[1];
+      // Filter for Printables CDN images
+      if (imgSrc.includes('media.printables.com') || imgSrc.includes('printables')) {
+        // Find nearby model ID
+        const imgIndex = html.indexOf(match[0]);
+        const context = html.substring(Math.max(0, imgIndex - 400), Math.min(html.length, imgIndex + 400));
+        const modelMatch = context.match(/\/model\/(\d+)/);
         
-        models.push({
-          name: altText || `3D Model #${id}`,
-          url: `https://www.printables.com/model/${id}`,
-          thumbnail: thumbnail.startsWith('http') ? thumbnail : `https:${thumbnail}`,
-          creator: 'Printables Community',
-          likes: 0,
-          description: `Printables model matching "${query}"`,
-          source: 'printables',
-        });
+        if (modelMatch && modelIds.has(modelMatch[1])) {
+          imageMap.set(modelMatch[1], { url: imgSrc, alt });
+        }
       }
+    }
+
+    // Build results
+    for (const id of Array.from(modelIds)) {
+      if (models.length >= limit) break;
+      const imageInfo = imageMap.get(id);
+      
+      models.push({
+        name: imageInfo?.alt || `3D Model #${id}`,
+        url: `https://www.printables.com/model/${id}`,
+        thumbnail: imageInfo ? (imageInfo.url.startsWith('http') ? imageInfo.url : `https:${imageInfo.url}`) : '',
+        creator: 'Printables',
+        likes: 0,
+        description: `Printables model for "${query}"`,
+        source: 'printables',
+      });
     }
 
     console.log(`Printables found ${models.length} models for "${query}"`);
