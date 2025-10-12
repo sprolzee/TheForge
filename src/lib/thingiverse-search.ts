@@ -28,7 +28,7 @@ export async function searchThingiverse(
 
     const response = await fetch(searchUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'User-Agent': 'Mozilla/5.0',
       },
     });
 
@@ -87,21 +87,11 @@ export async function searchThingiverse(
       }
     }
 
+    console.log(`Thingiverse found ${models.length} models for "${query}"`);
     return models;
   } catch (error) {
     console.error('Error searching Thingiverse:', error);
-    // Return fallback results with direct search link
-    return [
-      {
-        name: `Search results for "${query}"`,
-        url: `https://www.thingiverse.com/search?q=${encodeURIComponent(query)}&type=things&sort=relevant`,
-        thumbnail: '',
-        creator: 'Thingiverse',
-        likes: 0,
-        description: `Click to view search results on Thingiverse for "${query}"`,
-        source: 'thingiverse',
-      },
-    ];
+    return [];
   }
 }
 
@@ -119,8 +109,7 @@ export async function searchThangs(
 
     const response = await fetch(searchUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'User-Agent': 'Mozilla/5.0',
       },
     });
 
@@ -156,33 +145,11 @@ export async function searchThangs(
       }
     }
 
-    // Fallback
-    if (models.length === 0) {
-      models.push({
-        name: `Search results for "${query}"`,
-        url: searchUrl,
-        thumbnail: '',
-        creator: 'Thangs',
-        likes: 0,
-        description: `Click to view search results on Thangs for "${query}"`,
-        source: 'thangs',
-      });
-    }
-
+    console.log(`Thangs found ${models.length} models for "${query}"`);
     return models;
   } catch (error) {
     console.error('Error searching Thangs:', error);
-    return [
-      {
-        name: `Search results for "${query}"`,
-        url: `https://thangs.com/search/${encodeURIComponent(query)}?scope=all`,
-        thumbnail: '',
-        creator: 'Thangs',
-        likes: 0,
-        description: `Click to view search results on Thangs for "${query}"`,
-        source: 'thangs',
-      },
-    ];
+    return [];
   }
 }
 
@@ -200,8 +167,7 @@ export async function searchPrintables(
 
     const response = await fetch(searchUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'User-Agent': 'Mozilla/5.0',
       },
     });
 
@@ -243,33 +209,11 @@ export async function searchPrintables(
       }
     }
 
-    // Fallback
-    if (models.length === 0) {
-      models.push({
-        name: `Search results for "${query}"`,
-        url: searchUrl,
-        thumbnail: '',
-        creator: 'Printables',
-        likes: 0,
-        description: `Click to view search results on Printables for "${query}"`,
-        source: 'printables',
-      });
-    }
-
+    console.log(`Printables found ${models.length} models for "${query}"`);
     return models;
   } catch (error) {
     console.error('Error searching Printables:', error);
-    return [
-      {
-        name: `Search results for "${query}"`,
-        url: `https://www.printables.com/search/models?q=${encodeURIComponent(query)}`,
-        thumbnail: '',
-        creator: 'Printables',
-        likes: 0,
-        description: `Click to view search results on Printables for "${query}"`,
-        source: 'printables',
-      },
-    ];
+    return [];
   }
 }
 
@@ -286,12 +230,23 @@ export async function search3DModels(query: string): Promise<{
     printables: number;
   };
 }> {
-  // Search all sites concurrently for better performance
+  // Search all sites concurrently with individual error handling
   const [thingiverseResults, thangsResults, printablesResults] = await Promise.all([
-    searchThingiverse(query, 6),
-    searchThangs(query, 4),
-    searchPrintables(query, 4),
+    searchThingiverse(query, 5).catch(err => {
+      console.error('Thingiverse search failed:', err);
+      return [];
+    }),
+    searchThangs(query, 5).catch(err => {
+      console.error('Thangs search failed:', err);
+      return [];
+    }),
+    searchPrintables(query, 5).catch(err => {
+      console.error('Printables search failed:', err);
+      return [];
+    }),
   ]);
+
+  console.log(`Search results - Thingiverse: ${thingiverseResults.length}, Thangs: ${thangsResults.length}, Printables: ${printablesResults.length}`);
 
   // Combine and interleave results for variety
   const allResults: Model3D[] = [];
@@ -305,6 +260,48 @@ export async function search3DModels(query: string): Promise<{
     if (i < thingiverseResults.length) allResults.push(thingiverseResults[i]);
     if (i < thangsResults.length) allResults.push(thangsResults[i]);
     if (i < printablesResults.length) allResults.push(printablesResults[i]);
+  }
+
+  // If NO results from any site, provide direct search links as fallback
+  if (allResults.length === 0) {
+    console.log('All searches failed, returning direct search links');
+    return {
+      results: [
+        {
+          name: `Thingiverse: ${query}`,
+          url: `https://www.thingiverse.com/search?q=${encodeURIComponent(query)}&type=things&sort=relevant`,
+          thumbnail: '',
+          creator: 'Thingiverse',
+          likes: 0,
+          description: 'View search results on Thingiverse',
+          source: 'thingiverse' as const,
+        },
+        {
+          name: `Thangs: ${query}`,
+          url: `https://thangs.com/search/${encodeURIComponent(query)}?scope=all`,
+          thumbnail: '',
+          creator: 'Thangs',
+          likes: 0,
+          description: 'View search results on Thangs',
+          source: 'thangs' as const,
+        },
+        {
+          name: `Printables: ${query}`,
+          url: `https://www.printables.com/search/models?q=${encodeURIComponent(query)}`,
+          thumbnail: '',
+          creator: 'Printables',
+          likes: 0,
+          description: 'View search results on Printables',
+          source: 'printables' as const,
+        },
+      ],
+      searchQuery: query,
+      sourceCount: {
+        thingiverse: 1,
+        thangs: 1,
+        printables: 1,
+      },
+    };
   }
 
   return {

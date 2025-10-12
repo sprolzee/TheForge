@@ -43,37 +43,39 @@ export async function POST(req: Request) {
       );
     }
 
+    // Track tool execution to prevent multiple calls
+    let toolExecuted = false;
+
     const result = streamText({
       model: openai(model),
       messages: convertToModelMessages(messages),
-      system: `You are a helpful 3D printing assistant specializing in finding 3D printable models across multiple platforms including Thingiverse, Thangs, and Printables.
+      maxSteps: 2,
+      maxToolRoundtrips: 1,
+      system: `You are a helpful 3D printing assistant. When users ask for 3D models:
 
-Your role is to:
-1. Proactively ask users what kind of 3D model they're looking for if they haven't specified
-2. Help them refine their search terms to get better results
-3. Search multiple 3D model websites concurrently using the search_3d_models tool
-4. Present results clearly, highlighting different sources
-5. Offer to search again with different terms if needed
+IMPORTANT: You MUST respond with text BEFORE calling any tools.
 
-When presenting search results:
-- Mention how many results were found from each site
-- Suggest refinements if results seem limited
-- Help users understand which model might be best for their needs
+When a user asks for models:
+1. FIRST respond with a friendly message like "Let me search for that!" or "I'll find some great models for you!"
+2. THEN call the search_3d_models tool ONCE (it searches all sites automatically)
+3. The system will handle the follow-up response with results
 
-Be conversational, friendly, and focused on helping users find the perfect 3D model for their project.`,
+Always acknowledge the user's request with text before taking action. Only call the search tool ONCE per request.`,
       tools: {
         search_3d_models: {
           description:
-            'Search multiple 3D model sites (Thingiverse, Thangs, Printables) for 3D printable models based on a description. Use this when users describe what they want to print or are looking for specific models.',
+            'Search for 3D models across all three major sites: Thingiverse, Thangs, and Printables. This tool searches ALL THREE sites simultaneously and returns results from each. You should respond with text BEFORE calling this tool. Only call this tool ONCE - it automatically searches all sites.',
           inputSchema: z.object({
-            query: z
-              .string()
-              .describe(
-                'The search query describing the 3D model to find. Be specific and include relevant keywords like the object type, style, size, or purpose.'
-              ),
+            query: z.string().describe('Search query for 3D models'),
           }),
           execute: async ({ query }: { query: string }) => {
+            if (toolExecuted) {
+              console.log('Tool already executed, skipping duplicate call');
+              return { results: [], searchQuery: query, sourceCount: { thingiverse: 0, thangs: 0, printables: 0 } };
+            }
+            toolExecuted = true;
             const results = await search3DModels(query);
+            console.log('Tool executed - Total:', results.results.length, 'Breakdown:', results.sourceCount);
             return results;
           },
         },
