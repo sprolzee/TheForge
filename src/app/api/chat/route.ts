@@ -46,17 +46,17 @@ export async function POST(req: Request) {
     const result = streamText({
       model: openai(model),
       messages: convertToModelMessages(messages),
-      maxSteps: 5,
+      maxSteps: 2,
       system: `You are a helpful 3D printing assistant. When users ask for 3D models:
 
 IMPORTANT: You MUST respond with text BEFORE calling any tools.
 
 When a user asks for models:
 1. FIRST respond with a friendly message like "Let me search for that!" or "I'll find some great models for you!"
-2. THEN call the search_3d_models tool
+2. THEN call the search_3d_models tool ONCE (it searches all sites automatically)
 3. The system will handle the follow-up response with results
 
-Always acknowledge the user's request with text before taking action.`,
+Always acknowledge the user's request with text before taking action. Only call the search tool ONCE per request.`,
       tools: {
         search_3d_models: {
           description:

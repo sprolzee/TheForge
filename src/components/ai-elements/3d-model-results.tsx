@@ -98,7 +98,7 @@ export function ModelResults({ results }: ModelResultsProps) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {models.map((model, index) => (
             <a
-              key={index}
+              key={`${model.source}-${model.url}-${index}`}
               href={model.url}
               target="_blank"
               rel="noopener noreferrer"
