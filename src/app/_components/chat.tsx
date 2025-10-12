@@ -53,7 +53,7 @@ const models = [
 
 const suggestions = [
   'I need a 3D printable phone stand',
-  'Show me cool mechanical articulated models',
+  'Find me articulated dragon models',
   'I want to print functional organizers for my desk',
 ];
 
