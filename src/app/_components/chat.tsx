@@ -37,6 +37,8 @@ import {
   SourcesTrigger,
 } from '@/components/ai-elements/sources';
 import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
+import { ModelResults } from '@/components/ai-elements/3d-model-results';
+import { Tool, ToolContent, ToolHeader, ToolInput, ToolOutput } from '@/components/ai-elements/tool';
 
 const models = [
   {
@@ -50,9 +52,9 @@ const models = [
 ];
 
 const suggestions = [
-  'Can you explain how to play tennis?',
-  'Write me a code snippet of how to use the vercel ai sdk to create a chatbot',
-  'How do I make a really good fish taco?',
+  'Find me a 3D printable phone stand',
+  'Search for a cool dragon miniature on Thingiverse',
+  'I need a functional 3D printed box with a lid',
 ];
 
 const ChatBotDemo = () => {
@@ -125,6 +127,40 @@ const ChatBotDemo = () => {
                       </Sources>
                     )}
                   {message.parts.map((part, i) => {
+                    // Handle tool calls
+                    if (part.type.startsWith('tool-') && 'state' in part) {
+                      const toolPart = part as any; // Type assertion for tool parts
+                      const hasOutput = toolPart.state === 'output-available' && 'output' in toolPart;
+                      const isSearchTool = toolPart.type === 'tool-search_3d_models';
+                      return (
+                        <div key={`${message.id}-${i}`} className="my-4">
+                          <Tool defaultOpen={toolPart.state === 'output-available'}>
+                            <ToolHeader
+                              type={toolPart.type}
+                              state={toolPart.state}
+                            />
+                            <ToolContent>
+                              <ToolInput input={toolPart.input} />
+                              {isSearchTool && hasOutput && 'output' in toolPart ? (
+                                <div className="p-4">
+                                  <ModelResults results={toolPart.output} />
+                                </div>
+                              ) : hasOutput && 'output' in toolPart ? (
+                                <ToolOutput 
+                                  output={
+                                    toolPart.output && typeof toolPart.output === 'object'
+                                      ? JSON.stringify(toolPart.output, null, 2)
+                                      : toolPart.output
+                                  }
+                                  errorText={'errorText' in toolPart ? toolPart.errorText : undefined}
+                                />
+                              ) : null}
+                            </ToolContent>
+                          </Tool>
+                        </div>
+                      );
+                    }
+
                     switch (part.type) {
                       case 'text':
                         return (

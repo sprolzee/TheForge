@@ -1,5 +1,7 @@
 import { convertToModelMessages, streamText, type UIMessage } from 'ai';
 import { openai } from '@/echo';
+import { z } from 'zod';
+import { search3DModels } from '@/lib/thingiverse-search';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -44,6 +46,23 @@ export async function POST(req: Request) {
     const result = streamText({
       model: openai(model),
       messages: convertToModelMessages(messages),
+      tools: {
+        search_3d_models: {
+          description:
+            'Search Thingiverse.com for 3D printable models based on a description. Use this when users ask about finding, searching for, or getting 3D models, STL files, or printable designs.',
+          inputSchema: z.object({
+            query: z
+              .string()
+              .describe(
+                'The search query describing the 3D model the user wants to find. Be specific and include relevant keywords.'
+              ),
+          }),
+          execute: async ({ query }: { query: string }) => {
+            const results = await search3DModels(query);
+            return results;
+          },
+        },
+      },
     });
 
     return result.toUIMessageStreamResponse({

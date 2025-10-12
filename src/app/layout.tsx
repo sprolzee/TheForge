@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Echo Chat',
-  description: 'AI-powered chat application with Echo billing integration',
+  title: 'The Forge - AI 3D Model Search',
+  description: 'AI-powered chat with 3D model search on Thingiverse',
 };
 
 export default function RootLayout({
@@ -30,8 +30,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} flex h-screen flex-col antialiased`}
       >
         <Providers>
-          <Header title="Echo Chat" />
-          <div className="min-h-0 flex-1">{children}</div>
+          <Header title="The Forge" />
+          <main className="min-h-0 flex-1 overflow-hidden">{children}</main>
         </Providers>
       </body>
     </html>
