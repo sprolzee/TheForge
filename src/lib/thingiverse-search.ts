@@ -87,21 +87,11 @@ export async function searchThingiverse(
       }
     }
 
+    console.log(`Thingiverse found ${models.length} models for "${query}"`);
     return models;
   } catch (error) {
     console.error('Error searching Thingiverse:', error);
-    // Return fallback results with direct search link
-    return [
-      {
-        name: `Search results for "${query}"`,
-        url: `https://www.thingiverse.com/search?q=${encodeURIComponent(query)}&type=things&sort=relevant`,
-        thumbnail: '',
-        creator: 'Thingiverse',
-        likes: 0,
-        description: `Click to view search results on Thingiverse for "${query}"`,
-        source: 'thingiverse',
-      },
-    ];
+    return [];
   }
 }
 
@@ -155,33 +145,11 @@ export async function searchThangs(
       }
     }
 
-    // Fallback
-    if (models.length === 0) {
-      models.push({
-        name: `Search results for "${query}"`,
-        url: searchUrl,
-        thumbnail: '',
-        creator: 'Thangs',
-        likes: 0,
-        description: `Click to view search results on Thangs for "${query}"`,
-        source: 'thangs',
-      });
-    }
-
+    console.log(`Thangs found ${models.length} models for "${query}"`);
     return models;
   } catch (error) {
     console.error('Error searching Thangs:', error);
-    return [
-      {
-        name: `Search results for "${query}"`,
-        url: `https://thangs.com/search/${encodeURIComponent(query)}?scope=all`,
-        thumbnail: '',
-        creator: 'Thangs',
-        likes: 0,
-        description: `Click to view search results on Thangs for "${query}"`,
-        source: 'thangs',
-      },
-    ];
+    return [];
   }
 }
 
@@ -241,33 +209,11 @@ export async function searchPrintables(
       }
     }
 
-    // Fallback
-    if (models.length === 0) {
-      models.push({
-        name: `Search results for "${query}"`,
-        url: searchUrl,
-        thumbnail: '',
-        creator: 'Printables',
-        likes: 0,
-        description: `Click to view search results on Printables for "${query}"`,
-        source: 'printables',
-      });
-    }
-
+    console.log(`Printables found ${models.length} models for "${query}"`);
     return models;
   } catch (error) {
     console.error('Error searching Printables:', error);
-    return [
-      {
-        name: `Search results for "${query}"`,
-        url: `https://www.printables.com/search/models?q=${encodeURIComponent(query)}`,
-        thumbnail: '',
-        creator: 'Printables',
-        likes: 0,
-        description: `Click to view search results on Printables for "${query}"`,
-        source: 'printables',
-      },
-    ];
+    return [];
   }
 }
 
