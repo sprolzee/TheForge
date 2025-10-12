@@ -284,12 +284,23 @@ export async function search3DModels(query: string): Promise<{
     printables: number;
   };
 }> {
-  // Search all sites concurrently for better performance
+  // Search all sites concurrently with individual error handling
   const [thingiverseResults, thangsResults, printablesResults] = await Promise.all([
-    searchThingiverse(query, 6),
-    searchThangs(query, 4),
-    searchPrintables(query, 4),
+    searchThingiverse(query, 5).catch(err => {
+      console.error('Thingiverse search failed:', err);
+      return [];
+    }),
+    searchThangs(query, 5).catch(err => {
+      console.error('Thangs search failed:', err);
+      return [];
+    }),
+    searchPrintables(query, 5).catch(err => {
+      console.error('Printables search failed:', err);
+      return [];
+    }),
   ]);
+
+  console.log(`Search results - Thingiverse: ${thingiverseResults.length}, Thangs: ${thangsResults.length}, Printables: ${printablesResults.length}`);
 
   // Combine and interleave results for variety
   const allResults: Model3D[] = [];

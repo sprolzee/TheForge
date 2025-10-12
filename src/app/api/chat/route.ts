@@ -64,7 +64,7 @@ Always acknowledge the user's request with text before taking action. Only call 
       tools: {
         search_3d_models: {
           description:
-            'Search for 3D models on Thingiverse, Thangs, and Printables. You should respond with text BEFORE calling this tool. This searches ALL sites at once - only call it ONCE.',
+            'Search for 3D models across all three major sites: Thingiverse, Thangs, and Printables. This tool searches ALL THREE sites simultaneously and returns results from each. You should respond with text BEFORE calling this tool. Only call this tool ONCE - it automatically searches all sites.',
           inputSchema: z.object({
             query: z.string().describe('Search query for 3D models'),
           }),
@@ -75,7 +75,7 @@ Always acknowledge the user's request with text before taking action. Only call 
             }
             toolExecuted = true;
             const results = await search3DModels(query);
-            console.log('Tool executed, returning:', results.results.length, 'results');
+            console.log('Tool executed - Total:', results.results.length, 'Breakdown:', results.sourceCount);
             return results;
           },
         },
