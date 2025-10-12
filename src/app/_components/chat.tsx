@@ -55,6 +55,8 @@ const suggestions = [
   'I need a 3D printable phone stand',
   'Find me articulated dragon models',
   'I want to print functional organizers for my desk',
+  'Show me something cool and unique',
+  'What are popular prints right now?',
 ];
 
 const ChatBotDemo = () => {
