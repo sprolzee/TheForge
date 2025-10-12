@@ -262,6 +262,48 @@ export async function search3DModels(query: string): Promise<{
     if (i < printablesResults.length) allResults.push(printablesResults[i]);
   }
 
+  // If NO results from any site, provide direct search links as fallback
+  if (allResults.length === 0) {
+    console.log('All searches failed, returning direct search links');
+    return {
+      results: [
+        {
+          name: `Thingiverse: ${query}`,
+          url: `https://www.thingiverse.com/search?q=${encodeURIComponent(query)}&type=things&sort=relevant`,
+          thumbnail: '',
+          creator: 'Thingiverse',
+          likes: 0,
+          description: 'View search results on Thingiverse',
+          source: 'thingiverse' as const,
+        },
+        {
+          name: `Thangs: ${query}`,
+          url: `https://thangs.com/search/${encodeURIComponent(query)}?scope=all`,
+          thumbnail: '',
+          creator: 'Thangs',
+          likes: 0,
+          description: 'View search results on Thangs',
+          source: 'thangs' as const,
+        },
+        {
+          name: `Printables: ${query}`,
+          url: `https://www.printables.com/search/models?q=${encodeURIComponent(query)}`,
+          thumbnail: '',
+          creator: 'Printables',
+          likes: 0,
+          description: 'View search results on Printables',
+          source: 'printables' as const,
+        },
+      ],
+      searchQuery: query,
+      sourceCount: {
+        thingiverse: 1,
+        thangs: 1,
+        printables: 1,
+      },
+    };
+  }
+
   return {
     results: allResults.slice(0, 15), // Limit to 15 total results
     searchQuery: query,
