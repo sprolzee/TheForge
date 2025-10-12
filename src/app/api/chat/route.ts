@@ -46,34 +46,26 @@ export async function POST(req: Request) {
     const result = streamText({
       model: openai(model),
       messages: convertToModelMessages(messages),
-      system: `You are a helpful 3D printing assistant specializing in finding 3D printable models across multiple platforms including Thingiverse, Thangs, and Printables.
+      maxSteps: 5,
+      system: `You are a helpful 3D printing assistant. When users ask for 3D models:
+1. Call the search_3d_models tool
+2. After getting results, ALWAYS provide a text response with:
+   - A friendly greeting like "I found some great models for you!"
+   - Brief description of the top 2-3 models
+   - Links to the models
+   - Ask if they want more details
 
-Your role is to:
-1. Proactively ask users what kind of 3D model they're looking for if they haven't specified
-2. Help them refine their search terms to get better results
-3. Search multiple 3D model websites concurrently using the search_3d_models tool
-4. Present results clearly, highlighting different sources
-5. Offer to search again with different terms if needed
-
-When presenting search results:
-- Mention how many results were found from each site
-- Suggest refinements if results seem limited
-- Help users understand which model might be best for their needs
-
-Be conversational, friendly, and focused on helping users find the perfect 3D model for their project.`,
+You MUST respond with text after using the tool. Do not just show tool results.`,
       tools: {
         search_3d_models: {
           description:
-            'Search multiple 3D model sites (Thingiverse, Thangs, Printables) for 3D printable models based on a description. Use this when users describe what they want to print or are looking for specific models.',
+            'Search for 3D models. After using this, you MUST respond with text summarizing the results.',
           inputSchema: z.object({
-            query: z
-              .string()
-              .describe(
-                'The search query describing the 3D model to find. Be specific and include relevant keywords like the object type, style, size, or purpose.'
-              ),
+            query: z.string().describe('Search query'),
           }),
           execute: async ({ query }: { query: string }) => {
             const results = await search3DModels(query);
+            console.log('Tool executed, returning:', results.results.length, 'results');
             return results;
           },
         },
