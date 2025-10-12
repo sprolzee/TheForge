@@ -52,9 +52,9 @@ const models = [
 ];
 
 const suggestions = [
-  'Find me a 3D printable phone stand',
-  'Search for a cool dragon miniature on Thingiverse',
-  'I need a functional 3D printed box with a lid',
+  'I need a 3D printable phone stand',
+  'Find me miniature terrain for tabletop gaming',
+  'I want to print functional organizers for my desk',
 ];
 
 const ChatBotDemo = () => {

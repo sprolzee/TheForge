@@ -1,26 +1,49 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { ExternalLink, Box } from 'lucide-react';
 
-export interface ThingiverseModel {
+export interface Model3D {
   name: string;
   url: string;
   thumbnail: string;
   creator: string;
   likes: number;
   description: string;
+  source: 'thingiverse' | 'thangs' | 'printables' | 'cults3d' | 'myminifactory';
 }
 
 interface ModelResultsProps {
   results: {
-    thingiverse: ThingiverseModel[];
+    results: Model3D[];
     searchQuery: string;
+    sourceCount: {
+      thingiverse: number;
+      thangs: number;
+      printables: number;
+    };
   };
 }
 
-export function ModelResults({ results }: ModelResultsProps) {
-  const { thingiverse, searchQuery } = results;
+const sourceColors = {
+  thingiverse: 'bg-blue-500',
+  thangs: 'bg-purple-500',
+  printables: 'bg-orange-500',
+  cults3d: 'bg-red-500',
+  myminifactory: 'bg-green-500',
+} as const;
 
-  if (!thingiverse || thingiverse.length === 0) {
+const sourceNames = {
+  thingiverse: 'Thingiverse',
+  thangs: 'Thangs',
+  printables: 'Printables',
+  cults3d: 'Cults3D',
+  myminifactory: 'MyMiniFactory',
+} as const;
+
+export function ModelResults({ results }: ModelResultsProps) {
+  const { results: models, searchQuery, sourceCount } = results;
+
+  if (!models || models.length === 0) {
     return (
       <Card className="w-full">
         <CardHeader>
@@ -36,20 +59,44 @@ export function ModelResults({ results }: ModelResultsProps) {
     );
   }
 
+  const totalResults = sourceCount.thingiverse + sourceCount.thangs + sourceCount.printables;
+
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Box className="size-5" />
-          3D Models from Thingiverse
+          3D Models from Multiple Sites
         </CardTitle>
-        <CardDescription>
-          Found {thingiverse.length} model{thingiverse.length !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
+        <CardDescription className="space-y-2">
+          <div>
+            Found {totalResults} model{totalResults !== 1 ? 's' : ''} for &quot;{searchQuery}&quot;
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {sourceCount.thingiverse > 0 && (
+              <Badge variant="secondary" className="gap-1">
+                <div className={`size-2 rounded-full ${sourceColors.thingiverse}`} />
+                {sourceCount.thingiverse} from Thingiverse
+              </Badge>
+            )}
+            {sourceCount.thangs > 0 && (
+              <Badge variant="secondary" className="gap-1">
+                <div className={`size-2 rounded-full ${sourceColors.thangs}`} />
+                {sourceCount.thangs} from Thangs
+              </Badge>
+            )}
+            {sourceCount.printables > 0 && (
+              <Badge variant="secondary" className="gap-1">
+                <div className={`size-2 rounded-full ${sourceColors.printables}`} />
+                {sourceCount.printables} from Printables
+              </Badge>
+            )}
+          </div>
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {thingiverse.map((model, index) => (
+          {models.map((model, index) => (
             <a
               key={index}
               href={model.url}
@@ -72,9 +119,21 @@ export function ModelResults({ results }: ModelResultsProps) {
                 )}
               </div>
               <div className="p-4">
-                <h3 className="mb-1 flex items-start justify-between gap-2 font-semibold text-sm leading-tight">
-                  <span className="line-clamp-2">{model.name}</span>
+                <div className="mb-2 flex items-start justify-between gap-2">
+                  <Badge 
+                    variant="outline" 
+                    className="flex-shrink-0"
+                    style={{
+                      borderColor: sourceColors[model.source].replace('bg-', '#'),
+                    }}
+                  >
+                    <div className={`mr-1 size-2 rounded-full ${sourceColors[model.source]}`} />
+                    {sourceNames[model.source]}
+                  </Badge>
                   <ExternalLink className="mt-0.5 size-3 flex-shrink-0 text-muted-foreground" />
+                </div>
+                <h3 className="mb-1 font-semibold text-sm leading-tight">
+                  <span className="line-clamp-2">{model.name}</span>
                 </h3>
                 {model.creator && (
                   <p className="text-muted-foreground text-xs">by {model.creator}</p>
