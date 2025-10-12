@@ -49,8 +49,6 @@ export async function POST(req: Request) {
     const result = streamText({
       model: openai(model),
       messages: convertToModelMessages(messages),
-      maxSteps: 2,
-      maxToolRoundtrips: 1,
       system: `You are a helpful 3D printing assistant. When users ask for 3D models:
 
 IMPORTANT: You MUST respond with text BEFORE calling any tools.
