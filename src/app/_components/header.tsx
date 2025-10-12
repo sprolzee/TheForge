@@ -48,15 +48,15 @@ const menuItems = [
   },
   {
     label: '3D Models',
-    href: '/chat',
+    href: '/models',
     icon: Box,
-    description: 'Search for 3D printable models',
+    description: 'Browse 3D model providers',
   },
   {
     label: 'Documentation',
-    href: '#features',
+    href: '/docs',
     icon: FileText,
-    description: 'View features and docs',
+    description: 'Learn more about our platform',
   },
 ];
 
@@ -70,7 +70,7 @@ const Header: FC<HeaderProps> = ({
 
   return (
     <header
-      className={`${sticky ? 'sticky top-0 z-50' : 'relative'} w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${className}`}
+      className={`${sticky ? 'fixed top-0 z-50' : 'relative'} w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${className}`}
     >
       <div className="flex h-16 w-full items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">

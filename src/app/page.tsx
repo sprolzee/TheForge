@@ -81,7 +81,7 @@ export default async function Home() {
             <p className="text-center text-muted-foreground text-sm">
               © 2025 The Forge. Powered by{' '}
               <a 
-                href="https://www.meritsystems.com" 
+                href="https://www.merit.systems/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-[#E97D3A] transition-colors hover:text-[#D97030] hover:underline"
