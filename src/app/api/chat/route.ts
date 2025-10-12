@@ -43,10 +43,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // Track tool execution to prevent multiple calls
+    let toolExecuted = false;
+
     const result = streamText({
       model: openai(model),
       messages: convertToModelMessages(messages),
       maxSteps: 2,
+      maxToolRoundtrips: 1,
       system: `You are a helpful 3D printing assistant. When users ask for 3D models:
 
 IMPORTANT: You MUST respond with text BEFORE calling any tools.
@@ -60,11 +64,16 @@ Always acknowledge the user's request with text before taking action. Only call 
       tools: {
         search_3d_models: {
           description:
-            'Search for 3D models on Thingiverse, Thangs, and Printables. You should respond with text BEFORE calling this tool.',
+            'Search for 3D models on Thingiverse, Thangs, and Printables. You should respond with text BEFORE calling this tool. This searches ALL sites at once - only call it ONCE.',
           inputSchema: z.object({
             query: z.string().describe('Search query for 3D models'),
           }),
           execute: async ({ query }: { query: string }) => {
+            if (toolExecuted) {
+              console.log('Tool already executed, skipping duplicate call');
+              return { results: [], searchQuery: query, sourceCount: { thingiverse: 0, thangs: 0, printables: 0 } };
+            }
+            toolExecuted = true;
             const results = await search3DModels(query);
             console.log('Tool executed, returning:', results.results.length, 'results');
             return results;
