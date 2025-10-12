@@ -48,20 +48,21 @@ export async function POST(req: Request) {
       messages: convertToModelMessages(messages),
       maxSteps: 5,
       system: `You are a helpful 3D printing assistant. When users ask for 3D models:
-1. Call the search_3d_models tool
-2. After getting results, ALWAYS provide a text response with:
-   - A friendly greeting like "I found some great models for you!"
-   - Brief description of the top 2-3 models
-   - Links to the models
-   - Ask if they want more details
 
-You MUST respond with text after using the tool. Do not just show tool results.`,
+IMPORTANT: You MUST respond with text BEFORE calling any tools.
+
+When a user asks for models:
+1. FIRST respond with a friendly message like "Let me search for that!" or "I'll find some great models for you!"
+2. THEN call the search_3d_models tool
+3. The system will handle the follow-up response with results
+
+Always acknowledge the user's request with text before taking action.`,
       tools: {
         search_3d_models: {
           description:
-            'Search for 3D models. After using this, you MUST respond with text summarizing the results.',
+            'Search for 3D models on Thingiverse, Thangs, and Printables. You should respond with text BEFORE calling this tool.',
           inputSchema: z.object({
-            query: z.string().describe('Search query'),
+            query: z.string().describe('Search query for 3D models'),
           }),
           execute: async ({ query }: { query: string }) => {
             const results = await search3DModels(query);

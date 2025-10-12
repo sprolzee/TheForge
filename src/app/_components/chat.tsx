@@ -2,7 +2,7 @@
 
 import { useChat } from '@ai-sdk/react';
 import { CopyIcon, MessageSquare } from 'lucide-react';
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect, useRef } from 'react';
 import { Action, Actions } from '@/components/ai-elements/actions';
 import {
   Conversation,
@@ -61,6 +61,53 @@ const ChatBotDemo = () => {
   const [input, setInput] = useState('');
   const [model, setModel] = useState<string>(models[0].value);
   const { messages, sendMessage, status } = useChat();
+  const processedToolCalls = useRef<Set<string>>(new Set());
+
+  // Auto-trigger AI response after tool execution
+  useEffect(() => {
+    if (status !== 'ready' || messages.length === 0) return;
+
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.role !== 'assistant') return;
+
+    // Find tool parts that have completed
+    lastMessage.parts.forEach((part: any, idx: number) => {
+      if (
+        part.type === 'tool-search_3d_models' &&
+        part.state === 'output-available' &&
+        'output' in part
+      ) {
+        const toolId = `${lastMessage.id}-${idx}`;
+        
+        // Check if we've already processed this tool call
+        if (processedToolCalls.current.has(toolId)) return;
+        
+        // Check if there's already text after this tool
+        const hasTextAfter = lastMessage.parts.slice(idx + 1).some(
+          (p: any) => p.type === 'text' && p.text?.trim()
+        );
+        
+        if (hasTextAfter) return;
+
+        // Mark as processed and trigger AI summary
+        processedToolCalls.current.add(toolId);
+        
+        const results = part.output.results || [];
+        const topModels = results.slice(0, 3).map((m: any) => m.name).join(', ');
+        
+        setTimeout(() => {
+          sendMessage(
+            {
+              text: `Based on the ${results.length} models you found (including: ${topModels}), please provide a friendly summary with the top 3 recommendations and their links.`,
+            },
+            {
+              body: { model },
+            }
+          );
+        }, 300);
+      }
+    });
+  }, [messages, status, sendMessage, model]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,6 +179,7 @@ const ChatBotDemo = () => {
                       const toolPart = part as any; // Type assertion for tool parts
                       const hasOutput = toolPart.state === 'output-available' && 'output' in toolPart;
                       const isSearchTool = toolPart.type === 'tool-search_3d_models';
+                      
                       return (
                         <div key={`${message.id}-${i}`} className="my-4">
                           <Tool defaultOpen={toolPart.state === 'output-available'}>
