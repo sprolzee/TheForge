@@ -1,6 +1,7 @@
 import Header from '@/app/_components/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { DottedGlowBackground } from '@/components/ui/dotted-glow-background';
 import { ExternalLink, Box, Layers, Sparkles, Hexagon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -76,13 +77,22 @@ export default function ModelsPage() {
               return (
                 <div
                   key={provider.name}
-                  className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-6 transition-all duration-300 hover:border-[#E97D3A]/50 hover:shadow-2xl hover:shadow-[#E97D3A]/10 hover:-translate-y-1"
+                  className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card transition-all duration-300 hover:border-[#E97D3A]/50 hover:shadow-2xl hover:shadow-[#E97D3A]/10 hover:-translate-y-1"
                 >
-                  {/* Gradient overlay on hover */}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#E97D3A]/0 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-5" />
-
+                  <DottedGlowBackground
+                    className="pointer-events-none"
+                    gap={13}
+                    radius={1.4}
+                    color="rgba(233, 125, 58, 0.45)"
+                    glowColor="rgba(233, 125, 58, 0.65)"
+                    opacity={0.55}
+                    backgroundOpacity={0}
+                    speedMin={0.3}
+                    speedMax={1.0}
+                    speedScale={0.75}
+                  />
                   {/* Content */}
-                  <div className="relative flex h-full flex-col">
+                  <div className="relative z-10 flex h-full flex-col p-6">
                     {/* Icon */}
                     <div className={`mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${provider.iconBg} ring-1 ring-inset ring-white/10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                       <Icon className={`size-6 ${provider.iconColor} transition-transform duration-300`} />
