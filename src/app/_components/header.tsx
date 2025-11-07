@@ -68,7 +68,7 @@ const Header: FC<HeaderProps> = ({
     >
       <div className="flex h-16 w-full items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          <Image src="/forge-favicon.png" alt="The Forge" width={36} height={36} className="size-9" />
+          <Image src="/Forge-Favicon.png" alt="The Forge" width={36} height={36} className="size-9" />
           <h1 className="font-bold text-xl tracking-tight">{title}</h1>
         </Link>
 
@@ -91,7 +91,7 @@ const Header: FC<HeaderProps> = ({
             <SheetContent side="right" className="w-80">
               <SheetHeader className="text-left">
                 <SheetTitle className="flex items-center gap-2">
-                  <Image src="/forge-favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
+                  <Image src="/Forge-Favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
                   {title}
                 </SheetTitle>
                 <SheetDescription>

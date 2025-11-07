@@ -162,7 +162,7 @@ export default function ModelsPage() {
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-4">
             <div className="flex items-center gap-2">
-              <Image src="/forge-favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
+              <Image src="/Forge-Favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
               <span className="font-semibold">The Forge</span>
             </div>
             <p className="text-center text-muted-foreground text-sm">

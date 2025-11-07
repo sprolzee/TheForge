@@ -18,21 +18,21 @@ export const metadata: Metadata = {
   title: 'The Forge - AI 3D Model Search',
   description: 'AI-powered chat with 3D model search on Thingiverse, Thangs, and Printables',
   icons: {
-    icon: '/forge-favicon.png',
-    shortcut: '/forge-favicon.png',
-    apple: '/forge-favicon.png',
+    icon: '/Forge-Favicon.png',
+    shortcut: '/Forge-Favicon.png',
+    apple: '/Forge-Favicon.png',
   },
   openGraph: {
     title: 'The Forge - AI 3D Model Search',
     description: 'AI-powered chat with 3D model search on Thingiverse, Thangs, and Printables',
-    images: ['/forge-favicon.png'],
+    images: ['/Forge-Favicon.png'],
     type: 'website',
   },
   twitter: {
     card: 'summary',
     title: 'The Forge - AI 3D Model Search',
     description: 'AI-powered chat with 3D model search on Thingiverse, Thangs, and Printables',
-    images: ['/forge-favicon.png'],
+    images: ['/Forge-Favicon.png'],
   },
 };
 

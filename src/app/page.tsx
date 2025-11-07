@@ -27,7 +27,7 @@ export default async function Home() {
         <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center">
           <div className="mx-auto w-full max-w-3xl text-center">
             <div className="mb-6 inline-flex items-center justify-center sm:mb-8">
-              <Image src="/forge-favicon.png" alt="The Forge" width={96} height={96} className="size-20 drop-shadow-2xl sm:size-24" />
+              <Image src="/Forge-Favicon.png" alt="The Forge" width={96} height={96} className="size-20 drop-shadow-2xl sm:size-24" />
             </div>
             <h1 className="mb-4 font-bold text-4xl tracking-tight sm:mb-6 sm:text-5xl md:text-6xl lg:text-7xl">
               Welcome to{' '}
@@ -85,7 +85,7 @@ export default async function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-4">
             <div className="flex items-center gap-2">
-              <Image src="/forge-favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
+              <Image src="/Forge-Favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
               <span className="font-semibold">The Forge</span>
             </div>
             <p className="text-center text-muted-foreground text-sm">
