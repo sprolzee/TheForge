@@ -52,12 +52,6 @@ const menuItems = [
     icon: Box,
     description: 'Browse 3D model providers',
   },
-  {
-    label: 'Documentation',
-    href: '/docs',
-    icon: FileText,
-    description: 'Learn more about our platform',
-  },
 ];
 
 const Header: FC<HeaderProps> = ({
@@ -74,7 +68,7 @@ const Header: FC<HeaderProps> = ({
     >
       <div className="flex h-16 w-full items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          <Image src="/forge-favicon.png" alt="The Forge" width={36} height={36} className="size-9" />
+          <Image src="/Forge-Favicon.png" alt="The Forge" width={36} height={36} className="size-9" />
           <h1 className="font-bold text-xl tracking-tight">{title}</h1>
         </Link>
 
@@ -97,7 +91,7 @@ const Header: FC<HeaderProps> = ({
             <SheetContent side="right" className="w-80">
               <SheetHeader className="text-left">
                 <SheetTitle className="flex items-center gap-2">
-                  <Image src="/forge-favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
+                  <Image src="/Forge-Favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
                   {title}
                 </SheetTitle>
                 <SheetDescription>
@@ -139,13 +133,30 @@ const Header: FC<HeaderProps> = ({
                     Resources
                   </p>
                   <Link
-                    href="https://github.com"
+                    href="/docs"
+                    className="flex items-start gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-accent"
+                  >
+                    <FileText className="mt-0.5 size-5 text-muted-foreground" />
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium">Documentation</span>
+                      <span className="text-muted-foreground text-xs">
+                        Learn more about our platform
+                      </span>
+                    </div>
+                  </Link>
+                  <Link
+                    href="https://github.com/sprolzee/TheForge"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
+                    className="flex items-start gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-accent"
                   >
-                    <Github className="size-5 text-muted-foreground" />
-                    <span>GitHub</span>
+                    <Github className="mt-0.5 size-5 text-muted-foreground" />
+                    <div className="flex flex-col gap-1">
+                      <span className="font-medium">GitHub</span>
+                      <span className="text-muted-foreground text-xs">
+                        View source code
+                      </span>
+                    </div>
                   </Link>
                 </div>
 

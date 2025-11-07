@@ -18,31 +18,31 @@ export function EchoAccountButton({ echo }: { echo: EchoContextValue }) {
   const hasFreeCredits = freeTierBalance?.userSpendInfo.amountLeft ?? 0 > 0;
   const buttonContent = isLoading ? (
     <>
-      <Skeleton className="h-4 w-4" />
-      <Skeleton className="h-4 w-14" />
+      <Skeleton className="h-4 w-4 rounded-full" />
+      <Skeleton className="h-4 w-14 rounded" />
     </>
   ) : !user ? (
     <div className="flex items-center gap-2">
       {isSigningIn ? (
-        <Loader2 className="size-3 animate-spin" />
+        <Loader2 className="size-4 animate-spin" />
       ) : (
         <Logo className="size-5" />
       )}
-      <span className="text-xs">
+      <span className="text-xs font-semibold">
         {isSigningIn ? 'Connecting...' : 'Connect'}
       </span>
     </div>
   ) : (
     <>
       <Logo className="size-5" />
-      <span>{formatCurrency(totalBalance)}</span>
+      <span className="font-semibold">{formatCurrency(totalBalance)}</span>
     </>
   );
 
   const button = (
     <div className="relative inline-flex">
       <Button
-        variant="outline"
+        variant={!user ? 'turbo' : 'outline'}
         onClick={
           !user
             ? () => {
@@ -52,13 +52,13 @@ export function EchoAccountButton({ echo }: { echo: EchoContextValue }) {
             : undefined
         }
         disabled={isLoading || isSigningIn}
-        className="w-[108px] px-2.5"
+        className={`${!user ? 'w-[128px] px-3' : 'w-[108px] px-2.5'}`}
       >
         {buttonContent}
       </Button>
       {hasFreeCredits ? (
-        <div className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary">
-          <Gift className="size-3 text-primary-foreground " />
+        <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary shadow-lg ring-2 ring-background">
+          <Gift className="size-3 text-primary-foreground" />
         </div>
       ) : null}
     </div>

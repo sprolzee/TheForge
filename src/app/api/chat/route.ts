@@ -62,14 +62,14 @@ Always acknowledge the user's request with text before taking action. Only call 
       tools: {
         search_3d_models: {
           description:
-            'Search for 3D models across all three major sites: Thingiverse, Thangs, and Printables. This tool searches ALL THREE sites simultaneously and returns results from each. You should respond with text BEFORE calling this tool. Only call this tool ONCE - it automatically searches all sites.',
+            'Search for 3D models across all major sites: Thingiverse, Thangs, Printables, and MakerWorld. This tool searches ALL FOUR sites simultaneously and returns results from each. You should respond with text BEFORE calling this tool. Only call this tool ONCE - it automatically searches all sites.',
           inputSchema: z.object({
             query: z.string().describe('Search query for 3D models'),
           }),
           execute: async ({ query }: { query: string }) => {
             if (toolExecuted) {
               console.log('Tool already executed, skipping duplicate call');
-              return { results: [], searchQuery: query, sourceCount: { thingiverse: 0, thangs: 0, printables: 0 } };
+              return { results: [], searchQuery: query, sourceCount: { thingiverse: 0, thangs: 0, printables: 0, makerworld: 0 } };
             }
             toolExecuted = true;
             const results = await search3DModels(query);

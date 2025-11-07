@@ -1,40 +1,47 @@
 import Header from '@/app/_components/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink, Box, Layers, Sparkles } from 'lucide-react';
+import { DottedGlowBackground } from '@/components/ui/dotted-glow-background';
+import { ExternalLink, Box, Layers, Sparkles, Hexagon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 const providers = [
   {
     name: 'Thingiverse',
-    description: 'The largest 3D printing community with millions of free designs. Perfect for hobbyists and makers looking for a wide variety of models.',
+    description: 'The largest 3D printing community with millions of free designs.',
     url: 'https://www.thingiverse.com',
     icon: Box,
-    color: 'from-blue-500 to-blue-600',
     iconBg: 'from-blue-500/10 to-blue-500/5',
     iconColor: 'text-blue-600',
-    stats: { models: '2M+', users: '10M+' }
+    models: '2M+'
+  },
+  {
+    name: 'Thangs',
+    description: 'Modern search-focused platform for discovering 3D printable models.',
+    url: 'https://thangs.com',
+    icon: Sparkles,
+    iconBg: 'from-cyan-500/10 to-cyan-500/5',
+    iconColor: 'text-cyan-600',
+    models: '500K+'
   },
   {
     name: 'Printables',
-    description: 'A modern platform by Prusa with high-quality models and an active community. Features contests and rewards for creators.',
+    description: 'Prusa Research platform with contests and rewards for creators.',
     url: 'https://www.printables.com',
     icon: Layers,
-    color: 'from-orange-500 to-orange-600',
     iconBg: 'from-orange-500/10 to-orange-500/5',
     iconColor: 'text-orange-600',
-    stats: { models: '500K+', users: '2M+' }
+    models: '500K+'
   },
   {
-    name: 'MyMiniFactory',
-    description: 'Curated collection of premium 3D models. Every design is test printed and guaranteed to work perfectly.',
-    url: 'https://www.myminifactory.com',
-    icon: Sparkles,
-    color: 'from-purple-500 to-purple-600',
-    iconBg: 'from-purple-500/10 to-purple-500/5',
-    iconColor: 'text-purple-600',
-    stats: { models: '100K+', quality: 'Verified' }
+    name: 'MakerWorld',
+    description: 'Bambu Lab\'s official platform optimized for their printers.',
+    url: 'https://makerworld.com',
+    icon: Hexagon,
+    iconBg: 'from-green-500/10 to-green-500/5',
+    iconColor: 'text-green-600',
+    models: '200K+'
   },
 ];
 
@@ -64,47 +71,65 @@ export default function ModelsPage() {
       {/* Providers Grid */}
       <section className="flex-1 bg-background px-4 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-4 lg:gap-4">
             {providers.map((provider) => {
               const Icon = provider.icon;
               return (
-                <Card 
+                <div
                   key={provider.name}
-                  className="group flex flex-col border-border/50 transition-all hover:border-[#E97D3A]/50 hover:shadow-xl"
+                  className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card transition-all duration-300 hover:border-[#E97D3A]/50 hover:shadow-2xl hover:shadow-[#E97D3A]/10 hover:-translate-y-1"
                 >
-                  <CardHeader className="flex-1">
-                    <div className={`mb-4 flex size-14 items-center justify-center rounded-xl bg-gradient-to-br ${provider.iconBg}`}>
-                      <Icon className={`size-7 ${provider.iconColor}`} />
+                  <DottedGlowBackground
+                    className="pointer-events-none"
+                    gap={13}
+                    radius={1.4}
+                    color="rgba(233, 125, 58, 0.45)"
+                    glowColor="rgba(233, 125, 58, 0.65)"
+                    opacity={0.55}
+                    backgroundOpacity={0}
+                    speedMin={0.3}
+                    speedMax={1.0}
+                    speedScale={0.75}
+                  />
+                  {/* Content */}
+                  <div className="relative z-10 flex h-full flex-col p-6">
+                    {/* Icon */}
+                    <div className={`mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br ${provider.iconBg} ring-1 ring-inset ring-white/10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                      <Icon className={`size-6 ${provider.iconColor} transition-transform duration-300`} />
                     </div>
-                    <CardTitle className="text-2xl">{provider.name}</CardTitle>
-                    <CardDescription className="mt-2 text-base leading-relaxed">
+
+                    {/* Title */}
+                    <h3 className="mb-2 font-bold text-foreground text-xl tracking-tight">
+                      {provider.name}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="mb-4 flex-1 text-muted-foreground text-sm leading-relaxed">
                       {provider.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex gap-4 border-t pt-4">
-                      {Object.entries(provider.stats).map(([key, value]) => (
-                        <div key={key} className="flex-1">
-                          <p className="font-semibold text-foreground text-lg">{value}</p>
-                          <p className="text-muted-foreground text-xs capitalize">{key}</p>
-                        </div>
-                      ))}
+                    </p>
+
+                    {/* Stats */}
+                    <div className="mb-4 border-t border-border/50 pt-4">
+                      <p className="font-bold text-foreground text-2xl">{provider.models}</p>
+                      <p className="text-muted-foreground text-xs">Available Models</p>
                     </div>
-                    <Button 
-                      asChild 
-                      className="w-full gap-2 bg-gradient-to-r from-[#E97D3A] to-[#D97030] shadow-lg shadow-[#E97D3A]/30 transition-all hover:from-[#D97030] hover:to-[#C96328] hover:shadow-xl group-hover:shadow-[#E97D3A]/40"
+
+                    {/* CTA Button */}
+                    <a
+                      href={provider.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/btn relative flex items-center justify-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-[#E97D3A] to-[#D97030] px-4 py-2.5 font-semibold text-sm text-white shadow-md shadow-[#E97D3A]/20 transition-all duration-300 hover:shadow-lg hover:shadow-[#E97D3A]/40 hover:scale-[1.02]"
                     >
-                      <a 
-                        href={provider.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                      >
-                        Visit {provider.name}
-                        <ExternalLink className="size-4" />
-                      </a>
-                    </Button>
-                  </CardContent>
-                </Card>
+                      <span className="relative z-10 flex items-center gap-2">
+                        Visit Site
+                        <ExternalLink className="size-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+                      </span>
+                      {/* Shimmer effect */}
+                      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-500 group-hover/btn:translate-x-full" />
+                    </a>
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -137,7 +162,7 @@ export default function ModelsPage() {
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col items-center justify-between gap-3 sm:flex-row sm:gap-4">
             <div className="flex items-center gap-2">
-              <Image src="/forge-favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
+              <Image src="/Forge-Favicon.png" alt="The Forge" width={32} height={32} className="size-8" />
               <span className="font-semibold">The Forge</span>
             </div>
             <p className="text-center text-muted-foreground text-sm">

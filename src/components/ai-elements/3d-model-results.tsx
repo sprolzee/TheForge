@@ -9,7 +9,7 @@ export interface Model3D {
   creator: string;
   likes: number;
   description: string;
-  source: 'thingiverse' | 'thangs' | 'printables' | 'cults3d' | 'myminifactory';
+  source: 'thingiverse' | 'thangs' | 'printables' | 'cults3d' | 'myminifactory' | 'makerworld';
 }
 
 interface ModelResultsProps {
@@ -20,6 +20,7 @@ interface ModelResultsProps {
       thingiverse: number;
       thangs: number;
       printables: number;
+      makerworld: number;
     };
   };
 }
@@ -30,6 +31,7 @@ const sourceColors = {
   printables: 'bg-orange-500',
   cults3d: 'bg-red-500',
   myminifactory: 'bg-green-500',
+  makerworld: 'bg-green-600',
 } as const;
 
 const sourceNames = {
@@ -38,6 +40,7 @@ const sourceNames = {
   printables: 'Printables',
   cults3d: 'Cults3D',
   myminifactory: 'MyMiniFactory',
+  makerworld: 'MakerWorld',
 } as const;
 
 export function ModelResults({ results }: ModelResultsProps) {
@@ -59,7 +62,7 @@ export function ModelResults({ results }: ModelResultsProps) {
     );
   }
 
-  const totalResults = sourceCount.thingiverse + sourceCount.thangs + sourceCount.printables;
+  const totalResults = sourceCount.thingiverse + sourceCount.thangs + sourceCount.printables + sourceCount.makerworld;
 
   return (
     <Card className="w-full">
@@ -89,6 +92,12 @@ export function ModelResults({ results }: ModelResultsProps) {
               <Badge variant="secondary" className="gap-1">
                 <div className={`size-2 rounded-full ${sourceColors.printables}`} />
                 {sourceCount.printables} from Printables
+              </Badge>
+            )}
+            {sourceCount.makerworld > 0 && (
+              <Badge variant="secondary" className="gap-1">
+                <div className={`size-2 rounded-full ${sourceColors.makerworld}`} />
+                {sourceCount.makerworld} from MakerWorld
               </Badge>
             )}
           </div>

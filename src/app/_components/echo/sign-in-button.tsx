@@ -1,7 +1,8 @@
 'use client';
 
 import { useEcho } from '@merit-systems/echo-next-sdk/client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/echo-button';
+import { ArrowRight } from 'lucide-react';
 
 export default function SignInButton() {
   const { signIn } = useEcho();
@@ -9,9 +10,12 @@ export default function SignInButton() {
   return (
     <Button
       onClick={() => signIn()}
-      className="group relative flex w-full justify-center rounded-lg border border-transparent bg-primary px-4 py-3 font-medium text-sm text-white transition-colors duration-200 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      variant="turbo"
+      size="lg"
+      className="group w-full"
     >
-      Sign in with Echo
+      <span className="font-semibold">Sign in with Echo</span>
+      <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
     </Button>
   );
 }
