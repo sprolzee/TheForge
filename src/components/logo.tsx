@@ -20,7 +20,7 @@ export const Logo = React.forwardRef<HTMLDivElement, LogoProps>(
       >
         <Image
           src="/logo/light.svg"
-          alt="Merit Systems Logo"
+          alt="Echo Logo"
           width={200}
           height={200}
           className={cn('dark:hidden size-6', className)}
@@ -28,7 +28,7 @@ export const Logo = React.forwardRef<HTMLDivElement, LogoProps>(
         />
         <Image
           src="/logo/dark.svg"
-          alt="Merit Systems Logo"
+          alt="Echo Logo"
           width={200}
           height={200}
           className={cn('hidden dark:block size-6', className)}
@@ -40,3 +40,27 @@ export const Logo = React.forwardRef<HTMLDivElement, LogoProps>(
 );
 
 Logo.displayName = 'Logo';
+
+export const ForgeLogo = React.forwardRef<HTMLDivElement, LogoProps>(
+  ({ className, containerClassName, onClick, priority, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        onClick={onClick}
+        className={containerClassName}
+        {...props}
+      >
+        <Image
+          src="/Forge-Favicon.png"
+          alt="The Forge Logo"
+          width={200}
+          height={200}
+          className={cn('size-6', className)}
+          priority={priority}
+        />
+      </div>
+    );
+  }
+);
+
+ForgeLogo.displayName = 'ForgeLogo';
