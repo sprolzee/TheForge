@@ -75,6 +75,12 @@ export async function searchThingiverse(
       if (models.length >= limit) break;
       const thumbnail = imageMap.get(id) || '';
       
+      // Properly format thumbnail URL
+      let thumbnailUrl = thumbnail.trim();
+      if (thumbnailUrl && !thumbnailUrl.startsWith('http')) {
+        thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
+      }
+      
       models.push({
         name: `3D Model #${id}`,
         url: `https://www.thingiverse.com/thing:${id}`,
@@ -141,6 +147,24 @@ export async function searchThangs(
       const imgSrc = match[1];
       const alt = match[2] || '';
       
+      if (thumbnail && !thumbnail.includes('avatar') && !thumbnail.includes('logo')) {
+        const modelUrl = modelLinkMatch ? `https://thangs.com${modelLinkMatch[1]}` : `https://thangs.com/search/${encodeURIComponent(query)}`;
+        
+        // Properly format thumbnail URL
+        let thumbnailUrl = thumbnail.trim();
+        if (!thumbnailUrl.startsWith('http')) {
+          thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
+        }
+        
+        models.push({
+          name: altText || `3D Model from Thangs`,
+          url: modelUrl,
+          thumbnail: thumbnailUrl,
+          creator: 'Thangs',
+          likes: 0,
+          description: `Model for "${query}" on Thangs`,
+          source: 'thangs',
+        });
       // Filter for actual model images
       if ((imgSrc.includes('thangs-static') || imgSrc.includes('thangs.com')) && 
           !imgSrc.includes('avatar') && 
@@ -231,6 +255,21 @@ export async function searchPrintables(
         const context = html.substring(Math.max(0, imgIndex - 400), Math.min(html.length, imgIndex + 400));
         const modelMatch = context.match(/\/model\/(\d+)/);
         
+        // Properly format thumbnail URL
+        let thumbnailUrl = thumbnail.trim();
+        if (!thumbnailUrl.startsWith('http')) {
+          thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
+        }
+        
+        models.push({
+          name: altText || `3D Model #${id}`,
+          url: `https://www.printables.com/model/${id}`,
+          thumbnail: thumbnailUrl,
+          creator: 'Printables',
+          likes: 0,
+          description: `Printables model for "${query}"`,
+          source: 'printables',
+        });
         if (modelMatch && modelIds.has(modelMatch[1])) {
           imageMap.set(modelMatch[1], { url: imgSrc, alt });
         }

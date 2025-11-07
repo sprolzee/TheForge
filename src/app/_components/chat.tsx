@@ -95,6 +95,11 @@ const ChatBotDemo = () => {
         processedToolCalls.current.add(toolId);
 
         const results = part.output.results || [];
+        const rawSourceCount = (part.output.sourceCount ?? {}) as Record<string, unknown>;
+        const sourceEntries = Object.entries(rawSourceCount).filter(
+          (entry): entry is [string, number] => typeof entry[1] === 'number' && entry[1] > 0
+        );
+        const sourceSummary = sourceEntries
         const sourceCount = part.output.sourceCount || {};
         const sourceSummary = Object.entries(sourceCount)
           .filter(([_, count]) => count > 0)
