@@ -26,7 +26,7 @@ export default async function Home() {
               </span>
             </h1>
             <p className="mx-auto mb-8 max-w-2xl text-base text-muted-foreground sm:mb-10 sm:text-lg md:text-xl">
-              Search for 3D printable models using natural language. Powered by AI to help you find exactly what you need on Thingiverse.
+              AI-powered search across Thingiverse, Thangs, Printables, and MakerWorld. Just describe what you need in plain English.
             </p>
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               {signedIn ? (
