@@ -466,43 +466,43 @@ export default function DocsPage() {
                   </CardContent>
                 </Card>
 
-                {/* MyMiniFactory */}
-                <Card className="mb-6 border-purple-500/20">
+                {/* Thangs */}
+                <Card className="mb-6 border-cyan-500/20">
                   <CardHeader>
                     <div className="mb-3 flex items-center gap-3">
-                      <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500/10 to-purple-500/5">
-                        <Layers className="size-5 text-purple-600" />
+                      <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500/10 to-cyan-500/5">
+                        <Layers className="size-5 text-cyan-600" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl">MyMiniFactory</CardTitle>
-                        <p className="text-muted-foreground text-sm">Curated, test-printed quality</p>
+                        <CardTitle className="text-2xl">Thangs</CardTitle>
+                        <p className="text-muted-foreground text-sm">Modern search-focused platform</p>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="leading-relaxed text-muted-foreground">
-                      MyMiniFactory stands out for its quality-first approach. Every model is reviewed and many are test-printed 
-                      before publication, ensuring that what you download will actually work. Popular for miniatures and artistic prints.
+                      Thangs is a modern platform built around powerful search and discovery. With advanced filtering and a clean interface,
+                      it makes finding exactly what you need fast and easy. Great for both free and premium models.
                     </p>
-                    
+
                     <div>
                       <h4 className="mb-3 font-semibold">Key Features</h4>
                       <ul className="space-y-2">
                         <li className="flex items-start gap-2">
-                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-purple-600" />
-                          <span className="text-muted-foreground text-sm">Every model is test-printed and verified</span>
+                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-cyan-600" />
+                          <span className="text-muted-foreground text-sm">Advanced search with powerful filters</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-purple-600" />
-                          <span className="text-muted-foreground text-sm">Excellent for tabletop gaming miniatures</span>
+                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-cyan-600" />
+                          <span className="text-muted-foreground text-sm">Clean, modern interface and fast navigation</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-purple-600" />
-                          <span className="text-muted-foreground text-sm">Paid &amp; free models with designer support</span>
+                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-cyan-600" />
+                          <span className="text-muted-foreground text-sm">Mix of free and premium content from creators</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-purple-600" />
-                          <span className="text-muted-foreground text-sm">Tribes feature for premium designer content</span>
+                          <ChevronRight className="mt-0.5 size-4 shrink-0 text-cyan-600" />
+                          <span className="text-muted-foreground text-sm">Active community and regular new uploads</span>
                         </li>
                       </ul>
                     </div>
@@ -510,17 +510,17 @@ export default function DocsPage() {
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="rounded-lg border p-3">
                         <p className="mb-1 font-medium text-sm">Best For</p>
-                        <p className="text-muted-foreground text-sm">Miniatures, artistic prints, quality</p>
+                        <p className="text-muted-foreground text-sm">Discovery, search, variety</p>
                       </div>
                       <div className="rounded-lg border p-3">
-                        <p className="mb-1 font-medium text-sm">Quality</p>
-                        <p className="text-muted-foreground text-sm">Test-printed &amp; verified</p>
+                        <p className="mb-1 font-medium text-sm">Models</p>
+                        <p className="text-muted-foreground text-sm">500K+ designs</p>
                       </div>
                     </div>
 
                     <Button asChild variant="outline" size="sm" className="gap-2">
-                      <a href="https://www.myminifactory.com" target="_blank" rel="noopener noreferrer">
-                        Visit MyMiniFactory
+                      <a href="https://thangs.com" target="_blank" rel="noopener noreferrer">
+                        Visit Thangs
                         <ExternalLink className="size-3" />
                       </a>
                     </Button>
@@ -611,8 +611,8 @@ export default function DocsPage() {
                       <li className="flex items-start gap-3">
                         <ChevronRight className="mt-0.5 size-5 shrink-0 text-[#E97D3A]" />
                         <div>
-                          <span className="font-medium">For Quality Assurance</span>
-                          <p className="text-muted-foreground text-sm">MyMiniFactory guarantees every model is printable and verified</p>
+                          <span className="font-medium">For Search & Discovery</span>
+                          <p className="text-muted-foreground text-sm">Thangs excels at helping you find exactly what you need with powerful filters</p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3">
@@ -654,7 +654,7 @@ export default function DocsPage() {
                 </Card>
 
                 {/* X1 Carbon Collapsible */}
-                <Collapsible defaultOpen className="mb-4">
+                <Collapsible className="mb-4">
                   <Card>
                     <CollapsibleTrigger className="w-full">
                       <CardHeader className="cursor-pointer hover:bg-accent/50 transition-colors">
