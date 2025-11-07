@@ -100,9 +100,6 @@ const ChatBotDemo = () => {
           (entry): entry is [string, number] => typeof entry[1] === 'number' && entry[1] > 0
         );
         const sourceSummary = sourceEntries
-        const sourceCount = part.output.sourceCount || {};
-        const sourceSummary = Object.entries(sourceCount)
-          .filter(([_, count]) => count > 0)
           .map(([source, count]) => `${count} from ${source}`)
           .join(', ');
 

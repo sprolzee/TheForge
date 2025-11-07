@@ -142,35 +142,17 @@ export async function searchThangs(
     // Extract all images
     const imageMatches = html.matchAll(/<img[^>]*src="([^"]+)"[^>]*(?:alt="([^"]*)")?[^>]*>/gi);
     const imageMap = new Map<string, { url: string; alt: string }>();
-    
+
     for (const match of imageMatches) {
       const imgSrc = match[1];
       const alt = match[2] || '';
-      
-      if (thumbnail && !thumbnail.includes('avatar') && !thumbnail.includes('logo')) {
-        const modelUrl = modelLinkMatch ? `https://thangs.com${modelLinkMatch[1]}` : `https://thangs.com/search/${encodeURIComponent(query)}`;
-        
-        // Properly format thumbnail URL
-        let thumbnailUrl = thumbnail.trim();
-        if (!thumbnailUrl.startsWith('http')) {
-          thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
-        }
-        
-        models.push({
-          name: altText || `3D Model from Thangs`,
-          url: modelUrl,
-          thumbnail: thumbnailUrl,
-          creator: 'Thangs',
-          likes: 0,
-          description: `Model for "${query}" on Thangs`,
-          source: 'thangs',
-        });
-      // Filter for actual model images
-      if ((imgSrc.includes('thangs-static') || imgSrc.includes('thangs.com')) && 
-          !imgSrc.includes('avatar') && 
-          !imgSrc.includes('logo') &&
-          !imgSrc.includes('icon')) {
-        // Find nearby model link
+
+      if (
+        (imgSrc.includes('thangs-static') || imgSrc.includes('thangs.com')) &&
+        !imgSrc.includes('avatar') &&
+        !imgSrc.includes('logo') &&
+        !imgSrc.includes('icon')
+      ) {
         const imgIndex = html.indexOf(match[0]);
         const context = html.substring(Math.max(0, imgIndex - 300), Math.min(html.length, imgIndex + 300));
         const linkMatch = context.match(/href="(\/m\/[^"]+)"/);
@@ -248,28 +230,11 @@ export async function searchPrintables(
       const imgSrc = match[1];
       const alt = match[2] || '';
       
-      // Filter for Printables CDN images
       if (imgSrc.includes('media.printables.com') || imgSrc.includes('printables')) {
-        // Find nearby model ID
         const imgIndex = html.indexOf(match[0]);
         const context = html.substring(Math.max(0, imgIndex - 400), Math.min(html.length, imgIndex + 400));
         const modelMatch = context.match(/\/model\/(\d+)/);
         
-        // Properly format thumbnail URL
-        let thumbnailUrl = thumbnail.trim();
-        if (!thumbnailUrl.startsWith('http')) {
-          thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
-        }
-        
-        models.push({
-          name: altText || `3D Model #${id}`,
-          url: `https://www.printables.com/model/${id}`,
-          thumbnail: thumbnailUrl,
-          creator: 'Printables',
-          likes: 0,
-          description: `Printables model for "${query}"`,
-          source: 'printables',
-        });
         if (modelMatch && modelIds.has(modelMatch[1])) {
           imageMap.set(modelMatch[1], { url: imgSrc, alt });
         }
