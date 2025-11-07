@@ -52,10 +52,16 @@ export async function searchThingiverse(
       
       const [_, id, name, thumbnail, creator] = match;
       
+      // Properly format thumbnail URL
+      let thumbnailUrl = thumbnail.trim();
+      if (thumbnailUrl && !thumbnailUrl.startsWith('http')) {
+        thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
+      }
+      
       models.push({
         name: name.trim().replace(/<[^>]*>/g, ''),
         url: `https://www.thingiverse.com/thing:${id}`,
-        thumbnail: thumbnail.startsWith('http') ? thumbnail : `https:${thumbnail}`,
+        thumbnail: thumbnailUrl,
         creator: creator.trim().replace(/<[^>]*>/g, ''),
         likes: 0,
         description: '',
@@ -133,13 +139,19 @@ export async function searchThangs(
       if (thumbnail && !thumbnail.includes('avatar') && !thumbnail.includes('logo')) {
         const modelUrl = modelLinkMatch ? `https://thangs.com${modelLinkMatch[1]}` : `https://thangs.com/search/${encodeURIComponent(query)}`;
         
+        // Properly format thumbnail URL
+        let thumbnailUrl = thumbnail.trim();
+        if (!thumbnailUrl.startsWith('http')) {
+          thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
+        }
+        
         models.push({
           name: altText || `3D Model from Thangs`,
           url: modelUrl,
-          thumbnail: thumbnail.startsWith('http') ? thumbnail : `https:${thumbnail}`,
-          creator: 'Thangs Community',
+          thumbnail: thumbnailUrl,
+          creator: 'Thangs',
           likes: 0,
-          description: `Model matching "${query}" on Thangs`,
+          description: `Model for "${query}" on Thangs`,
           source: 'thangs',
         });
       }
@@ -197,13 +209,19 @@ export async function searchPrintables(
         seen.add(modelLinkMatch[1]);
         const id = modelLinkMatch[1];
         
+        // Properly format thumbnail URL
+        let thumbnailUrl = thumbnail.trim();
+        if (!thumbnailUrl.startsWith('http')) {
+          thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
+        }
+        
         models.push({
           name: altText || `3D Model #${id}`,
           url: `https://www.printables.com/model/${id}`,
-          thumbnail: thumbnail.startsWith('http') ? thumbnail : `https:${thumbnail}`,
-          creator: 'Printables Community',
+          thumbnail: thumbnailUrl,
+          creator: 'Printables',
           likes: 0,
-          description: `Printables model matching "${query}"`,
+          description: `Printables model for "${query}"`,
           source: 'printables',
         });
       }

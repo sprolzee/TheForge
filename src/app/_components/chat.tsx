@@ -93,14 +93,20 @@ const ChatBotDemo = () => {
 
         // Mark as processed and trigger AI summary
         processedToolCalls.current.add(toolId);
-        
+
         const results = part.output.results || [];
-        const topModels = results.slice(0, 3).map((m: any) => m.name).join(', ');
-        
+        const rawSourceCount = (part.output.sourceCount ?? {}) as Record<string, unknown>;
+        const sourceEntries = Object.entries(rawSourceCount).filter(
+          (entry): entry is [string, number] => typeof entry[1] === 'number' && entry[1] > 0
+        );
+        const sourceSummary = sourceEntries
+          .map(([source, count]) => `${count} from ${source}`)
+          .join(', ');
+
         setTimeout(() => {
           sendMessage(
             {
-              text: `Based on the ${results.length} models you found (including: ${topModels}), please provide a friendly summary with the top 3 recommendations and their links.`,
+              text: `I found ${results.length} total models (${sourceSummary}). Please provide a friendly summary highlighting the variety of models found across the different platforms. Mention that users can click on any model card above to view it on the original site.`,
             },
             {
               body: { model },
