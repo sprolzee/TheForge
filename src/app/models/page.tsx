@@ -1,7 +1,7 @@
 import Header from '@/app/_components/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink, Box, Layers, Sparkles } from 'lucide-react';
+import { ExternalLink, Box, Layers, Sparkles, Hexagon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -35,6 +35,16 @@ const providers = [
     iconBg: 'from-purple-500/10 to-purple-500/5',
     iconColor: 'text-purple-600',
     stats: { models: '100K+', quality: 'Verified' }
+  },
+  {
+    name: 'MakerWorld',
+    description: 'Bambu Lab\'s official platform for 3D models, optimized for their printers. Free models with strong community support.',
+    url: 'https://makerworld.com',
+    icon: Hexagon,
+    color: 'from-green-500 to-green-600',
+    iconBg: 'from-green-500/10 to-green-500/5',
+    iconColor: 'text-green-600',
+    stats: { models: '200K+', community: 'Active' }
   },
 ];
 
