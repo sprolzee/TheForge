@@ -80,11 +80,11 @@ export async function searchThingiverse(
       if (thumbnailUrl && !thumbnailUrl.startsWith('http')) {
         thumbnailUrl = thumbnailUrl.startsWith('//') ? `https:${thumbnailUrl}` : `https://${thumbnailUrl}`;
       }
-      
+
       models.push({
         name: `3D Model #${id}`,
         url: `https://www.thingiverse.com/thing:${id}`,
-        thumbnail: thumbnail.startsWith('http') ? thumbnail : thumbnail ? `https:${thumbnail}` : '',
+        thumbnail: thumbnailUrl,
         creator: 'Thingiverse',
         likes: 0,
         description: `Thingiverse model for "${query}"`,
